@@ -37,10 +37,10 @@ public class GameActivity extends AppCompatActivity {
             {0, 0, 0}
     };
 
-    private GamePlayer gamePlayer;
+    private Plane gamePlayer;
 
-    private final int xLength = 12;
-    private final int yLength = 3;
+    private final int yLength = 12;
+    private final int xLength = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         findViews();
-        gamePlayer = new GamePlayer(game_IMG_hearts.length);
+        gamePlayer = new Plane(game_IMG_hearts.length);
         initViews();
         createNewBird(-1);
     }
@@ -83,19 +83,21 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initScreen() {
-        for (int i = 1; i < xLength - 1; i++) {
-            for (int j = 0; j < yLength; j++) {
+        for (int i = 1; i < yLength - 1; i++) {
+            for (int j = 0; j < xLength; j++) {
                 birds[i][j] = 0;
-                Glide.with(this)
-                        .load("")
-                        .fitCenter()
-                        .into(gameBoard[i][j]);
+                Glide.with(this).clear(gameBoard[i][j])
+//                        .load("")
+//                        .fitCenter()
+//                        .into(gameBoard[i][j])
+                ;
             }
         }
         Glide.with(this)
                 .load(R.drawable.plane)
                 .fitCenter()
                 .into(gameBoard[10][1]);
+        gamePlayer.setX(1);
     }
 
     private void vanishPlane(int yScale) {
@@ -132,23 +134,23 @@ public class GameActivity extends AppCompatActivity {
 //    }
 
     private void playerGoRight() {
-        int y = gamePlayer.getY();
-        if (y != 2) {
-            vanishPlane(y);
-            y++;
-            gamePlayer.setY(y);
-            restorePlane(y);
+        int x = gamePlayer.getX();
+        if (x != 2) {
+            vanishPlane(x);
+            x++;
+            gamePlayer.setX(x);
+            restorePlane(x);
             moveBird();
         }
     }
 
     private void playerGoLeft() {
-        int y = gamePlayer.getY();
-        if (y != 0) {
-            vanishPlane(y);
-            y--;
-            gamePlayer.setY(y);
-            restorePlane(y);
+        int x = gamePlayer.getX();
+        if (x != 0) {
+            vanishPlane(x);
+            x--;
+            gamePlayer.setX(x);
+            restorePlane(x);
             moveBird();
         }
     }
@@ -204,8 +206,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void moveBird() {
-        for (int i = xLength - 2; i >= 1; i--) {
-            for (int j = yLength - 1; j >= 0; j--) {
+        for (int i = yLength - 2; i >= 1; i--) {
+            for (int j = xLength - 1; j >= 0; j--) {
                 if (birds[i][j] == 1) {
                     moveDownBird(i, j);
                 }
@@ -214,20 +216,20 @@ public class GameActivity extends AppCompatActivity {
         availableToCreateNewBird();
     }
 
-    private void vanishBird(int xScale, int yScale) {
+    private void vanishBird(int yScale, int xScale) {
         Glide.with(this)
                 .load("")
                 .fitCenter()
-                .into(gameBoard[xScale][yScale]);
-        birds[xScale][yScale] = 0;
+                .into(gameBoard[yScale][xScale]);
+        birds[yScale][xScale] = 0;
     }
 
-    private void restoreBird(int xScale, int yScale) {
+    private void restoreBird(int yScale, int xScale) {
         Glide.with(this)
                 .load(R.drawable.bird)
                 .fitCenter()
-                .into(gameBoard[xScale][yScale]);
-        birds[xScale][yScale] = 1;
+                .into(gameBoard[yScale][xScale]);
+        birds[yScale][xScale] = 1;
     }
 
     private void crashToast() {
@@ -251,7 +253,7 @@ public class GameActivity extends AppCompatActivity {
      * @return false if didn't crash, and true if crash
      */
     private boolean checkIfCrash(int i, int j) {
-        if (i == 10 && gamePlayer.getY() == j) {
+        if (i == 10 && gamePlayer.getX() == j) {
             int crash = gamePlayer.getNumOfCrash();
             if (crash < gamePlayer.getLife()) {
                 crash++;
