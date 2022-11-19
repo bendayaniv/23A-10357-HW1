@@ -18,29 +18,36 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
+    private final int yLength = 12;
+    private final int xLength = 3;
+    private final int boardLimit = 10;
+    private final int stepRightOfPlane = 1;
+    private final int stepLeftOfPlane = -1;
+    private final int planeImage = R.drawable.plane;
+
     private ExtendedFloatingActionButton gameActivity_FAB_left;
     private ExtendedFloatingActionButton gameActivity_FAB_right;
     private ShapeableImageView[][] gameBoard;
     private ShapeableImageView[] game_IMG_hearts;
-    private int[][] birds = new int[][]{
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0},
-            {0, 0, 0}
-    };
+//    private int[][] birds = new int[][]{
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0},
+//            {0, 0, 0}
+//    };
 
-    private Plane gamePlayer;
+//    private Plane gamePlayer;
+    private ManagerActivity gameManager;
 
-    private final int yLength = 12;
-    private final int xLength = 3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +55,10 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         findViews();
-        gamePlayer = new Plane(game_IMG_hearts.length);
-        initViews();
+        createButtons();
+//        gamePlayer = new Plane(game_IMG_hearts.length);
+        gameManager = new ManagerActivity(game_IMG_hearts.length);
+//        initViews();
         createNewBird(-1);
     }
 
@@ -76,10 +85,54 @@ public class GameActivity extends AppCompatActivity {
         };
     }
 
-    private void initViews() {
+    private void createButtons() {
         gameActivity_FAB_right.setOnClickListener(v -> playerGoRight());
         gameActivity_FAB_left.setOnClickListener(v -> playerGoLeft());
-        restorePlane(gamePlayer.getY());
+    }
+
+//    private void initViews() {
+//        gameActivity_FAB_right.setOnClickListener(v -> playerGoRight());
+//        gameActivity_FAB_left.setOnClickListener(v -> playerGoLeft());
+//        restorePlane(gamePlayer.getY());
+//    }
+
+    private void movePlaneRight() {
+        int x = gameManager.getPlane().getX();
+        vanishPlane(x);
+        gameManager.movePlane(stepRightOfPlane);
+        x = gameManager.getPlane().getX();
+        restorePlane(x);
+//        if (x != 2) {
+//            vanishPlane(x);
+//            x++;
+//            gameManager.getPlane().setX(x);
+//            restorePlane(x);
+//            moveBird();
+//        }
+    }
+
+    private void vanishPlane(int xScale) {
+        Glide.with(this).clear(gameBoard[boardLimit][xScale]);
+    }
+
+    private void restorePlane(int xScale) {
+        Glide.with(this).load(planeImage).fitCenter().into(gameBoard[boardLimit][xScale]);
+//        if (birds[9][yScale] == 1) {
+//            vanishBird(10, yScale);
+//            initScreen();
+//        } else if(birds[10][yScale] == 1) {
+//            vanishBird(10, yScale);
+//            Glide.with(this)
+//                    .load(R.drawable.plane)
+//                    .fitCenter()
+//                    .into(gameBoard[10][yScale]);
+//        }
+//        else {
+//            Glide.with(this)
+//                    .load(R.drawable.plane)
+//                    .fitCenter()
+//                    .into(gameBoard[10][yScale]);
+//        }
     }
 
     private void initScreen() {
@@ -100,31 +153,31 @@ public class GameActivity extends AppCompatActivity {
         gamePlayer.setX(1);
     }
 
-    private void vanishPlane(int yScale) {
-        Glide.with(this)
-                .load("")
-                .fitCenter()
-                .into(gameBoard[10][yScale]);
-    }
+//    private void vanishPlane(int yScale) {
+//        Glide.with(this)
+//                .load("")
+//                .fitCenter()
+//                .into(gameBoard[10][yScale]);
+//    }
 
-    private void restorePlane(int yScale) {
-        if (birds[9][yScale] == 1) {
-            vanishBird(10, yScale);
-            initScreen();
-        } else if(birds[10][yScale] == 1) {
-            vanishBird(10, yScale);
-            Glide.with(this)
-                    .load(R.drawable.plane)
-                    .fitCenter()
-                    .into(gameBoard[10][yScale]);
-        }
-        else {
-            Glide.with(this)
-                    .load(R.drawable.plane)
-                    .fitCenter()
-                    .into(gameBoard[10][yScale]);
-        }
-    }
+//    private void restorePlane(int yScale) {
+//        if (birds[9][yScale] == 1) {
+//            vanishBird(10, yScale);
+//            initScreen();
+//        } else if(birds[10][yScale] == 1) {
+//            vanishBird(10, yScale);
+//            Glide.with(this)
+//                    .load(R.drawable.plane)
+//                    .fitCenter()
+//                    .into(gameBoard[10][yScale]);
+//        }
+//        else {
+//            Glide.with(this)
+//                    .load(R.drawable.plane)
+//                    .fitCenter()
+//                    .into(gameBoard[10][yScale]);
+//        }
+//    }
 
 //    private void explosion(int yScale) {
 //        Glide.with(this)
