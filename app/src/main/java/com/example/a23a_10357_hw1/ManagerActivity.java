@@ -29,11 +29,11 @@ public class ManagerActivity {
         int planeOnX = plane.getX();
         if (planeMove == -1) {
             if (plane.getX() != 0) {
-                plane.setX(planeOnX + 1);
+                plane.setX(planeOnX - 1);
             }
         } else if(planeMove == 1) {
             if (plane.getX() != 2) {
-                plane.setX(planeOnX - 1);
+                plane.setX(planeOnX + 1);
             }
         }
     }
@@ -52,7 +52,12 @@ public class ManagerActivity {
                 birds.get(i).setY(tmpY);
             }
         }
-        checkTheAbilityToCreateNewBird();
+        if(birds.size() > 0) {
+            checkTheAbilityToCreateNewBird();
+        }
+        else {
+            createNewBird(-1);
+        }
     }
 
     /**

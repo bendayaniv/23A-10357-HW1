@@ -45,8 +45,7 @@ public class GameActivity extends AppCompatActivity {
         findViews();
         createButtons();
         gameManager = new ManagerActivity(game_IMG_hearts.length);
-        gameManager.createNewBird(-1);
-
+//        gameManager.createNewBird(-1);
         startGame();
     }
 
@@ -119,11 +118,21 @@ public class GameActivity extends AppCompatActivity {
                 Glide.with(this).clear(gameBoard[i][j]);
             }
         }
-        gameManager.getBirds().clear();
+//        gameManager.getBirds().clear();
     }
 
     private void moveAllBirds() {
         gameManager.moveBirdsDown(boardLimit);
+        loadAllBirds();
+    }
+
+    private void loadAllBirds() {
+        ArrayList<Bird> birds = gameManager.getBirds();
+        for(int i = 0; i < birds.size(); i++) {
+            if(birds.get(i).getY() <= boardLimit) {
+                loadImage(birds.get(i).getBirdImage(), gameBoard[birds.get(i).getY()][birds.get(i).getX()]);
+            }
+        }
     }
 
     private void crashToast() {
@@ -145,7 +154,25 @@ public class GameActivity extends AppCompatActivity {
         timer.cancel();
     }
 
+    private void refreshUI() {
+        long millis = System.currentTimeMillis() - startTime;
+        int seconds = (int) (millis / 1000);
+//        seconds = seconds % 60;
+
+        initializationBoard();
+        moveAllBirds();
+//        vanishPlane(gameManager.getPlane().getX());
+        gameManager.movePlane(0);
+//        gameManager.createNewBird(-1);
+        restorePlane(gameManager.getPlane().getX());
+
+        if (seconds % 3 == 0) {
+            gameManager.createNewBird(-1);
+        }
+    }
+
     private void startGame() {
+        startTime = System.currentTimeMillis();
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -167,23 +194,5 @@ public class GameActivity extends AppCompatActivity {
                 });
             }
         }, DELAY, DELAY);
-        startTime = System.currentTimeMillis();
     }
-
-    private void refreshUI() {
-        long millis = System.currentTimeMillis() - startTime;
-        int seconds = (int) (millis / 1000);
-        seconds = seconds % 60;
-
-        initializationBoard();
-        moveAllBirds();
-        vanishPlane(gameManager.getPlane().getX());
-        gameManager.movePlane(0);
-        restorePlane(gameManager.getPlane().getX());
-
-        if (seconds % 3 == 0) {
-            gameManager.createNewBird(-1);
-        }
-    }
-
 }
