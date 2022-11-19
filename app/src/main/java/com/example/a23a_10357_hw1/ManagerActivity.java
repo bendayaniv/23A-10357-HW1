@@ -1,6 +1,7 @@
 package com.example.a23a_10357_hw1;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ManagerActivity {
 
@@ -30,7 +31,7 @@ public class ManagerActivity {
             if (plane.getX() != 0) {
                 plane.setX(planeOnX + 1);
             }
-        } else {
+        } else if(planeMove == 1) {
             if (plane.getX() != 2) {
                 plane.setX(planeOnX - 1);
             }
@@ -51,19 +52,91 @@ public class ManagerActivity {
                 birds.get(i).setY(tmpY);
             }
         }
+        checkTheAbilityToCreateNewBird();
+    }
+
+    /**
+     * Check if we can create new bird this step
+     * (so that the player can continue to play without being disqualified)
+     */
+    public void checkTheAbilityToCreateNewBird() {
+        int xFirstBird = -1;
+        int xSecondBird = -1;
+        for (int i = 0; i < birds.size(); i++) {
+            if (birds.get(i).getY() == 3) {
+                xFirstBird = birds.get(i).getX();
+            } else if (birds.get(i).getY() == 2) {
+                xSecondBird = birds.get(i).getX();
+            }
+        }
+
+        if (xFirstBird != -1 && xSecondBird != -1) {
+            if (xFirstBird == 0) {
+                if (xSecondBird == 1) {
+                    createNewBird(2);
+                } else if (xSecondBird == 2) {
+                    createNewBird(1);
+                } else {
+                    createNewBird(-1);
+                }
+            } else if (xFirstBird == 1) {
+                if (xSecondBird == 0) {
+                    createNewBird(2);
+                } else if (xSecondBird == 2) {
+                    createNewBird(0);
+                } else {
+                    createNewBird(-1);
+                }
+            } else if (xFirstBird == 2) {
+                if (xSecondBird == 0) {
+                    createNewBird(1);
+                } else if (xSecondBird == 1) {
+                    createNewBird(0);
+                } else {
+                    createNewBird(-1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Create new bird
+     *
+     * @param index == indicates if can be anywhere (-1) or can not be in specific place(!-1)
+     */
+    public void createNewBird(int index) {
+        int randomX = new Random().nextInt(3);
+        if (index != -1) {
+            while (randomX == index) {
+                randomX = new Random().nextInt(3);
+            }
+        }
+        birds.add(new Bird(randomX, 1));
     }
 
     /**
      * Check if there is a clash between a bird and the plane
+     * If it does. it raise the number of crashes in 1
+     * (if it lost all his life, it stop to raise the number of crashes)
      *
      * @return true if does, false if does not
      */
-    private boolean checkIfCrash() {
+    public boolean checkIfCrash() {
         for (int i = 0; i < birds.size(); i++) {
             if (birds.get(i).getX() == plane.getX() && birds.get(i).getY() == plane.getY()) {
+                raiseCrashNumber();
                 return true;
             }
         }
         return false;
     }
+
+    private void raiseCrashNumber() {
+        int crash = getPlane().getNumOfCrash();
+        if (crash < getPlane().getLife()) {
+            crash++;
+            getPlane().setNumOfCrash(crash);
+        }
+    }
+
 }

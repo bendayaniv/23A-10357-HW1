@@ -7,10 +7,20 @@ public class Plane {
     private int x;
     private final int y = 10;
     private final int life;
+    private final int planeImage = R.drawable.plane;
+    private final int explodeImage = R.drawable.explosion;
 
     public Plane(int lifeLength) {
         life = lifeLength;
         x = 1;
+    }
+
+    public int getPlaneImage() {
+        return planeImage;
+    }
+
+    public int getExplodeImage() {
+        return explodeImage;
     }
 
     public int getNumOfCrash() {
