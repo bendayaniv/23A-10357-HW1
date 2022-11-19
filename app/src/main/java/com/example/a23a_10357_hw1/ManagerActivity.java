@@ -58,6 +58,7 @@ public class ManagerActivity {
         else {
             createNewBird(-1);
         }
+//        createNewBird(-1);
     }
 
     /**

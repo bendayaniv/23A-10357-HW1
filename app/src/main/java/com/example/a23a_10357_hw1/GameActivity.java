@@ -15,7 +15,6 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,7 +44,6 @@ public class GameActivity extends AppCompatActivity {
         findViews();
         createButtons();
         gameManager = new ManagerActivity(game_IMG_hearts.length);
-//        gameManager.createNewBird(-1);
         startGame();
     }
 
@@ -160,12 +158,10 @@ public class GameActivity extends AppCompatActivity {
 
         initializationBoard();
         moveAllBirds();
-//        vanishPlane(gameManager.getPlane().getX());
         gameManager.movePlane(0);
-//        gameManager.createNewBird(-1);
         restorePlane(gameManager.getPlane().getX());
 
-        if (seconds % 2 == 0) {
+        if (seconds % 3 == 0) {
             gameManager.createNewBird(-1);
         }
     }
@@ -186,7 +182,7 @@ public class GameActivity extends AppCompatActivity {
                         crashToast();
                         vibrateAll();
                         gameManager.getBirds().clear();
-                        loadImage(gameManager.getPlane().getExplodeImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
+//                        loadImage(gameManager.getPlane().getExplodeImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
                         stopGame();
                         startGame();
                     }
