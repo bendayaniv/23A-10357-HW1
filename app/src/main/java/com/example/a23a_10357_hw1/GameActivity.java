@@ -118,7 +118,6 @@ public class GameActivity extends AppCompatActivity {
                 Glide.with(this).clear(gameBoard[i][j]);
             }
         }
-//        gameManager.getBirds().clear();
     }
 
     private void moveAllBirds() {
@@ -157,7 +156,7 @@ public class GameActivity extends AppCompatActivity {
     private void refreshUI() {
         long millis = System.currentTimeMillis() - startTime;
         int seconds = (int) (millis / 1000);
-//        seconds = seconds % 60;
+        seconds = seconds % 60;
 
         initializationBoard();
         moveAllBirds();
@@ -166,7 +165,7 @@ public class GameActivity extends AppCompatActivity {
 //        gameManager.createNewBird(-1);
         restorePlane(gameManager.getPlane().getX());
 
-        if (seconds % 3 == 0) {
+        if (seconds % 2 == 0) {
             gameManager.createNewBird(-1);
         }
     }
@@ -188,9 +187,9 @@ public class GameActivity extends AppCompatActivity {
                         vibrateAll();
                         gameManager.getBirds().clear();
                         loadImage(gameManager.getPlane().getExplodeImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
+                        stopGame();
+                        startGame();
                     }
-                    stopGame();
-                    startGame();
                 });
             }
         }, DELAY, DELAY);
