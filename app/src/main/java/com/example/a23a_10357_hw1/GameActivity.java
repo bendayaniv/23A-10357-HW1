@@ -187,7 +187,7 @@ public class GameActivity extends AppCompatActivity {
                         crashToast();
                         vibrateAll();
                         gameManager.getBirds().clear();
-//                        loadImage(gameManager.getPlane().getExplodeImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
+                        loadImage(gameManager.getPlane().getExplodeImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
                         stopGame();
                         startGame();
                     }
