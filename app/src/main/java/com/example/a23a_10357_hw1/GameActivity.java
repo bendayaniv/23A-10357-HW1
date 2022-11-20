@@ -42,7 +42,7 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         /**
-         *Set direction on all devices from LEfT to RIGHT
+         *Set direction on all devices from LEFT to RIGHT
          */
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 
