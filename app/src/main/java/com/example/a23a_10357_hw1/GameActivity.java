@@ -41,6 +41,11 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        /**
+         *Set direction on all devices from LEfT to RIGHT
+         */
+        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+
         findViews();
         createButtons();
         gameManager = new ManagerActivity(game_IMG_hearts.length);

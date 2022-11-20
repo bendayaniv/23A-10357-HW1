@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".GameActivity">
 
 
@@ -13,7 +14,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        app:icon="@drawable/ic_baseline_arrow_circle_left_24" />
+        android:layoutDirection="rtl"
+        app:icon="@drawable/ic_baseline_arrow_circle_left_24"
+        />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/gameActivity_FAB_right"
@@ -22,7 +25,9 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        app:icon="@drawable/ic_baseline_arrow_circle_right_24" />
+        android:layoutDirection="rtl"
+        app:icon="@drawable/ic_baseline_arrow_circle_right_24"
+        />
 
 
     <LinearLayout
