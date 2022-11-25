@@ -1,21 +1,18 @@
 package com.example.a23a_10357_hw1;
 
-public class Plane {
+public class Plane extends Object {
 
     private int numOfCrash = 0;
     private int x;
-    private final int y = 10;
+    private int y;
     private final int life;
     private final int planeImage = R.drawable.plane;
     private final int explodeImage = R.drawable.explosion;
 
     public Plane(int lifeLength) {
         life = lifeLength;
-        x = 1;
-    }
-
-    public int getPlaneImage() {
-        return planeImage;
+        setX(1);
+        setY(10);
     }
 
     public int getExplodeImage() {
@@ -31,20 +28,32 @@ public class Plane {
         return this;
     }
 
-    public int getX() {
+    public int getLife() {
+        return life;
+    }
+
+    @Override
+    int getObjectImage() {
+        return planeImage;
+    }
+
+    @Override
+    int getX() {
         return x;
     }
 
-    public Plane setX(int x) {
+    @Override
+    void setX(int x) {
         this.x = x;
-        return this;
     }
 
-    public int getY() {
+    @Override
+    int getY() {
         return y;
     }
 
-    public int getLife() {
-        return life;
+    @Override
+    void setY(int y) {
+        this.y = y;
     }
 }

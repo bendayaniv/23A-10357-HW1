@@ -1,6 +1,6 @@
 package com.example.a23a_10357_hw1;
 
-public class Bird {
+public class Bird extends Object{
 
     private int x;
     private int y;
@@ -11,25 +11,28 @@ public class Bird {
         this.y = y;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getBirdImage() {
+    @Override
+    int getObjectImage() {
         return birdImage;
     }
 
-    public Bird setX(int x) {
-        this.x = x;
-        return this;
+    @Override
+    int getX() {
+        return x;
     }
 
-    public int getY() {
+    @Override
+    void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    int getY() {
         return y;
     }
 
-    public Bird setY(int y) {
+    @Override
+    void setY(int y) {
         this.y = y;
-        return this;
     }
 }

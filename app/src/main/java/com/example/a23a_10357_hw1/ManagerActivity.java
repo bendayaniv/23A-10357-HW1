@@ -5,22 +5,27 @@ import java.util.Random;
 
 public class ManagerActivity {
 
-    private ArrayList<Bird> birds;
     private Plane plane;
+    private Object[][] objectsBoard;
+    private int numOfObjects;
 
-    public ManagerActivity(int life) {
+    public ManagerActivity(int life, int yLength, int xLength) {
         plane = new Plane(life);
-        birds = new ArrayList<>();
+        objectsBoard = new Object[yLength][xLength];
+        numOfObjects = 0;
     }
 
-    public ArrayList<Bird> getBirds() {
-        return birds;
+    public int getNumOfObjects() {
+        return numOfObjects;
+    }
+
+    public Object[][] getBoard() {
+        return objectsBoard;
     }
 
     public Plane getPlane() {
         return plane;
     }
-
 
     /**
      * Can not move directly from [10][0] to [10][2] and the opposite
@@ -31,7 +36,7 @@ public class ManagerActivity {
             if (plane.getX() != 0) {
                 plane.setX(planeOnX - 1);
             }
-        } else if(planeMove == 1) {
+        } else if (planeMove == 1) {
             if (plane.getX() != 2) {
                 plane.setX(planeOnX + 1);
             }
@@ -39,69 +44,86 @@ public class ManagerActivity {
     }
 
     /**
-     * Move all exists birds one step down
+     * Move all exists objects one step down
      *
      * @param boardLimit the limit to the objects on the board
      */
-    public void moveBirdsDown(int boardLimit) {
-        for (int i = 0; i < birds.size(); i++) {
-            if (birds.get(i).getY() == boardLimit) {
-                birds.remove(birds.get(i));
-            } else {
-                int tmpY = birds.get(i).getY() + 1;
-                birds.get(i).setY(tmpY);
+    public void moveObjectsDown(int boardLimit, int xScale) {
+        for (int i = objectsBoard.length - 1; i >= 0; i--) {
+            for (int j = 0; j < objectsBoard[i].length; j++) {
+                if (objectsBoard[i][j] != null && objectsBoard[i][j].getY() == boardLimit) {
+                    objectsBoard[i][j] = null;
+                } else if (objectsBoard[i][j] != null) {
+                    int tmpY = objectsBoard[i][j].getY() + 1;
+                    objectsBoard[i][j].setY(tmpY);
+                    objectsBoard[i + 1][j] = objectsBoard[i][j];
+                    objectsBoard[i][j] = null;
+                }
             }
         }
-        if(birds.size() > 0) {
-            checkTheAbilityToCreateNewBird();
+        checkTheAbilityToCreateNewBird(boardLimit, xScale);
+    }
+
+    public void clearAllObjects() {
+        for (int i = objectsBoard.length - 1; i >= 0; i--) {
+            for (int j = 0; j < objectsBoard[i].length; j++) {
+                objectsBoard[i][j] = null;
+            }
         }
-        else {
-            createNewBird(-1);
-        }
-//        createNewBird(-1);
+        numOfObjects = 0;
     }
 
     /**
      * Check if we can create new bird this step
      * (so that the player can continue to play without being disqualified)
+     *
+     * @param boardLimit an indication to see if there could be a problem in placing a bird
+     * @param xScale     the limit on the x scale
      */
-    public void checkTheAbilityToCreateNewBird() {
-        int xFirstBird = -1;
-        int xSecondBird = -1;
-        for (int i = 0; i < birds.size(); i++) {
-            if (birds.get(i).getY() == 3) {
-                xFirstBird = birds.get(i).getX();
-            } else if (birds.get(i).getY() == 2) {
-                xSecondBird = birds.get(i).getX();
-            }
-        }
+    public void checkTheAbilityToCreateNewBird(int boardLimit, int xScale) {
+        int theIndex = -1;
+        if (numOfObjects > 0) {
+            if (boardLimit <= xScale) {
+                ArrayList<Integer> checkList = new ArrayList<>();
+                boolean checking = true;
 
-        if (xFirstBird != -1 && xSecondBird != -1) {
-            if (xFirstBird == 0) {
-                if (xSecondBird == 1) {
-                    createNewBird(2);
-                } else if (xSecondBird == 2) {
-                    createNewBird(1);
-                } else {
-                    createNewBird(-1);
+                for (int i = xScale - 1; i > 0; i--) {
+                    for (int j = 0; j < objectsBoard[i].length; j++) {
+                        if (objectsBoard[i][j] instanceof Bird) {
+                            checkList.add(objectsBoard[i][j].getX());
+                            break;
+                        }
+                    }
                 }
-            } else if (xFirstBird == 1) {
-                if (xSecondBird == 0) {
-                    createNewBird(2);
-                } else if (xSecondBird == 2) {
-                    createNewBird(0);
-                } else {
-                    createNewBird(-1);
-                }
-            } else if (xFirstBird == 2) {
-                if (xSecondBird == 0) {
-                    createNewBird(1);
-                } else if (xSecondBird == 1) {
-                    createNewBird(0);
-                } else {
-                    createNewBird(-1);
+
+                if (checkList.size() == xScale - 1) {
+                    if (checkList.get(0) == 0) {
+                        for (int i = 1; i < checkList.size(); i++) {
+                            if (checkList.get(i - 1) + 1 != checkList.get(i)) {
+                                checking = false;
+                                break;
+                            }
+                        }
+                        if (checking == true) {
+                            theIndex = xScale - 1;
+                        }
+                        createNewBird(theIndex, xScale);
+                    } else if (checkList.get(0) == xScale - 2) {
+                        for (int i = 1; i < checkList.size(); i++) {
+                            if (checkList.get(i - 1) - 1 != checkList.get(i)) {
+                                checking = false;
+                                break;
+                            }
+                        }
+                        if (checking == true) {
+                            theIndex = 0;
+                        }
+                        createNewBird(theIndex, xScale);
+                    }
                 }
             }
+        } else {
+            createNewBird(theIndex, xScale);
         }
     }
 
@@ -110,26 +132,30 @@ public class ManagerActivity {
      *
      * @param index == indicates if can be anywhere (-1) or can not be in specific place(!-1)
      */
-    public void createNewBird(int index) {
-        int randomX = new Random().nextInt(3);
-        if (index != -1) {
-            while (randomX == index) {
-                randomX = new Random().nextInt(3);
+    public void createNewBird(int index, int howManyOptions) {
+        //The extra 1 is for the option to not create
+        int randomX = new Random().nextInt(howManyOptions + 1);
+        if (randomX >= 0 && randomX <= 2) {
+            if (index != -1) {
+                while (randomX == index) {
+                    randomX = new Random().nextInt(3);
+                }
             }
+            objectsBoard[1][randomX] = new Bird(randomX, 1);
+            numOfObjects++;
         }
-        birds.add(new Bird(randomX, 1));
     }
 
     /**
      * Check if there is a clash between a bird and the plane
-     * If it does. it raise the number of crashes in 1
+     * If it does, it raise the number of crashes in 1
      * (if it lost all his life, it stop to raise the number of crashes)
      *
      * @return true if does, false if does not
      */
-    public boolean checkIfCrash() {
-        for (int i = 0; i < birds.size(); i++) {
-            if (birds.get(i).getX() == plane.getX() && birds.get(i).getY() == plane.getY()) {
+    public boolean checkIfCrash(int boardLimit) {
+        for (int i = 0; i < objectsBoard[boardLimit].length; i++) {
+            if (objectsBoard[boardLimit][i] != null && plane.getX() == i) {
                 raiseCrashNumber();
                 return true;
             }

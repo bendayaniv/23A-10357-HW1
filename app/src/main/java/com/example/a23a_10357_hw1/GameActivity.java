@@ -14,18 +14,19 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
 
     final int DELAY = 1000;
-    private final int yLength = 12;
-    private final int xLength = 3;
-    private final int boardLimit = 10;
-    private final int stepRightOfPlane = 1;
-    private final int stepLeftOfPlane = -1;
+    private final int Y_LENGTH = 12;
+    private final int X_LENGTH = 3;
+    private final int BOARD_LIMIT = 10;
+    private final int STEP_RIGHT_OF_PLANE = 1;
+    private final int STEP_LEFT_OF_PLANE = -1;
+    private final String LEFT_DIRECTION = "LEFT";
+    private final String RIGHT_DIRECTION = "RIGHT";
 
     private ExtendedFloatingActionButton gameActivity_FAB_left;
     private ExtendedFloatingActionButton gameActivity_FAB_right;
@@ -48,7 +49,7 @@ public class GameActivity extends AppCompatActivity {
 
         findViews();
         createButtons();
-        gameManager = new ManagerActivity(game_IMG_hearts.length);
+        gameManager = new ManagerActivity(game_IMG_hearts.length, Y_LENGTH, X_LENGTH);
         startGame();
     }
 
@@ -76,8 +77,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void createButtons() {
-        gameActivity_FAB_right.setOnClickListener(v -> movePlaneRight());
-        gameActivity_FAB_left.setOnClickListener(v -> movePlaneLeft());
+        gameActivity_FAB_right.setOnClickListener(v -> movePlane(RIGHT_DIRECTION));
+        gameActivity_FAB_left.setOnClickListener(v -> movePlane(LEFT_DIRECTION));
     }
 
     private void loadImage(int imageNum, ShapeableImageView imageView) {
@@ -88,51 +89,42 @@ public class GameActivity extends AppCompatActivity {
         Glide.with(this).clear(imageView);
     }
 
-    private void movePlaneRight() {
-        int x = gameManager.getPlane().getX();
-        vanishPlane(x);
-        gameManager.movePlane(stepRightOfPlane);
-        x = gameManager.getPlane().getX();
-        restorePlane(x);
-    }
-
-    private void movePlaneLeft() {
-        int x = gameManager.getPlane().getX();
-        vanishPlane(x);
-        gameManager.movePlane(stepLeftOfPlane);
-        x = gameManager.getPlane().getX();
-        restorePlane(x);
-    }
-
-    private void vanishPlane(int xScale) {
-        deleteImage(gameBoard[boardLimit][xScale]);
-    }
-
-    private void restorePlane(int xScale) {
-        loadImage(gameManager.getPlane().getPlaneImage(), gameBoard[boardLimit][xScale]);
+    /**
+     * @param direction = the direction of the plane
+     */
+    private void movePlane(String direction) {
+        deleteImage(gameBoard[BOARD_LIMIT][gameManager.getPlane().getX()]);
+        if (direction.equals("RIGHT"))
+            gameManager.movePlane(STEP_RIGHT_OF_PLANE);
+        else if (direction.equals("LEFT"))
+            gameManager.movePlane(STEP_LEFT_OF_PLANE);
+        loadImage(gameManager.getPlane().getObjectImage(), gameBoard[BOARD_LIMIT][gameManager.getPlane().getX()]);
     }
 
     /**
-     * Clean the game board and the list of birds
+     * Clean the game board
      */
-    private void initializationBoard() {
-        for (int i = 0; i < yLength; i++) {
-            for (int j = 0; j < xLength; j++) {
+    private void cleanTheBoard() {
+        for (int i = Y_LENGTH - 1; i > 0; i--) {
+            for (int j = 0; j < X_LENGTH; j++) {
                 Glide.with(this).clear(gameBoard[i][j]);
             }
         }
     }
 
-    private void moveAllBirds() {
-        gameManager.moveBirdsDown(boardLimit);
-        loadAllBirds();
+    private void moveAllObjects() {
+        cleanTheBoard();
+        gameManager.moveObjectsDown(BOARD_LIMIT, X_LENGTH);
+        loadAllObjects();
     }
 
-    private void loadAllBirds() {
-        ArrayList<Bird> birds = gameManager.getBirds();
-        for(int i = 0; i < birds.size(); i++) {
-            if(birds.get(i).getY() <= boardLimit) {
-                loadImage(birds.get(i).getBirdImage(), gameBoard[birds.get(i).getY()][birds.get(i).getX()]);
+    private void loadAllObjects() {
+        Object[][] board = gameManager.getBoard();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] != null && board[i][j].getY() <= BOARD_LIMIT) {
+                    loadImage(board[i][j].getObjectImage(), gameBoard[board[i][j].getY()][board[i][j].getX()]);
+                }
             }
         }
     }
@@ -161,13 +153,13 @@ public class GameActivity extends AppCompatActivity {
         int seconds = (int) (millis / 1000);
         seconds = seconds % 60;
 
-        initializationBoard();
-        moveAllBirds();
-        gameManager.movePlane(0);
-        restorePlane(gameManager.getPlane().getX());
+        if (gameManager.getNumOfObjects() > 0) {
+            moveAllObjects();
+            loadImage(gameManager.getPlane().getObjectImage(), gameBoard[BOARD_LIMIT][gameManager.getPlane().getX()]);
+        }
 
-        if (seconds % 3 == 0) {
-            gameManager.createNewBird(-1);
+        if (seconds % 2 == 0) {
+            gameManager.createNewBird(-1, X_LENGTH);
         }
     }
 
@@ -178,7 +170,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void run() {
                 runOnUiThread(() -> {
-                    if (!gameManager.checkIfCrash()) {
+                    if (!gameManager.checkIfCrash(BOARD_LIMIT)) {
                         refreshUI();
                     } else {
                         if (gameManager.getPlane().getNumOfCrash() != 0) {
@@ -186,10 +178,15 @@ public class GameActivity extends AppCompatActivity {
                         }
                         crashToast();
                         vibrateAll();
-                        gameManager.getBirds().clear();
+
+                        gameManager.clearAllObjects();
+
                         loadImage(gameManager.getPlane().getExplodeImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
-                        stopGame();
-                        startGame();
+                        gameManager.getPlane().setY(10);
+                        gameManager.getPlane().setX(1);
+
+//                        stopGame();
+//                        startGame();
                     }
                 });
             }
