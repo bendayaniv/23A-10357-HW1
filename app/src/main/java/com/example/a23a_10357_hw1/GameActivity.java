@@ -23,6 +23,7 @@ public class GameActivity extends AppCompatActivity {
     private final int Y_LENGTH = 12;
     private final int X_LENGTH = 3;
     private final int BOARD_LIMIT = 10;
+    private final int DEFAULT_X_FOR_PLANE = 1;
     private final int STEP_RIGHT_OF_PLANE = 1;
     private final int STEP_LEFT_OF_PLANE = -1;
     private final String LEFT_DIRECTION = "LEFT";
@@ -42,15 +43,13 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        /**
-         *Set direction on all devices from LEFT to RIGHT
-         */
+        //Set direction on all devices from LEFT to RIGHT
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 
         findViews();
-        createButtons();
-        gameManager = new ManagerActivity(game_IMG_hearts.length, Y_LENGTH, X_LENGTH);
-        startGame();
+        createMovingPlaneButtons();
+        gameManager = new ManagerActivity(game_IMG_hearts.length, Y_LENGTH, X_LENGTH, DEFAULT_X_FOR_PLANE, BOARD_LIMIT);
+        startTimer();
     }
 
     private void findViews() {
@@ -76,7 +75,7 @@ public class GameActivity extends AppCompatActivity {
         };
     }
 
-    private void createButtons() {
+    private void createMovingPlaneButtons() {
         gameActivity_FAB_right.setOnClickListener(v -> movePlane(RIGHT_DIRECTION));
         gameActivity_FAB_left.setOnClickListener(v -> movePlane(LEFT_DIRECTION));
     }
@@ -90,15 +89,19 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
+     * First - we delete the images of the plane from his current location
+     * Second - we check if the plane goes right or left and move him
+     * Then - we load the plane image to his new location
+     *
      * @param direction = the direction of the plane
      */
     private void movePlane(String direction) {
-        deleteImage(gameBoard[BOARD_LIMIT][gameManager.getPlane().getX()]);
+        deleteImage(gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
         if (direction.equals("RIGHT"))
             gameManager.movePlane(STEP_RIGHT_OF_PLANE);
         else if (direction.equals("LEFT"))
             gameManager.movePlane(STEP_LEFT_OF_PLANE);
-        loadImage(gameManager.getPlane().getObjectImage(), gameBoard[BOARD_LIMIT][gameManager.getPlane().getX()]);
+        loadImage(gameManager.getPlane().getObjectImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
     }
 
     /**
@@ -107,21 +110,29 @@ public class GameActivity extends AppCompatActivity {
     private void cleanTheBoard() {
         for (int i = Y_LENGTH - 1; i > 0; i--) {
             for (int j = 0; j < X_LENGTH; j++) {
-                Glide.with(this).clear(gameBoard[i][j]);
+                deleteImage(gameBoard[i][j]);
             }
         }
     }
 
+    /**
+     * Before moving all the existing objects on the board (except the plane!), we must clean the board of images
+     * Then move all the objects
+     * Then load all the images of the objects in their new locations
+     * And finally load the image of the plane in his location
+     */
     private void moveAllObjects() {
         cleanTheBoard();
         gameManager.moveObjectsDown(BOARD_LIMIT, X_LENGTH);
         loadAllObjects();
+        loadImage(gameManager.getPlane().getObjectImage(), gameBoard[BOARD_LIMIT][gameManager.getPlane().getX()]);
     }
 
     private void loadAllObjects() {
         Object[][] board = gameManager.getBoard();
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
+                //Checking if there is exist object in this location and if it reached to the limit he can go on the board
                 if (board[i][j] != null && board[i][j].getY() <= BOARD_LIMIT) {
                     loadImage(board[i][j].getObjectImage(), gameBoard[board[i][j].getY()][board[i][j].getX()]);
                 }
@@ -144,7 +155,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void stopGame() {
+    private void stopTimer() {
         timer.cancel();
     }
 
@@ -153,17 +164,19 @@ public class GameActivity extends AppCompatActivity {
         int seconds = (int) (millis / 1000);
         seconds = seconds % 60;
 
+        //Checking if there is objects to move,
+        //if it does - move them
         if (gameManager.getNumOfObjects() > 0) {
             moveAllObjects();
-            loadImage(gameManager.getPlane().getObjectImage(), gameBoard[BOARD_LIMIT][gameManager.getPlane().getX()]);
         }
 
+        //Create new bird every 2 seconds
         if (seconds % 2 == 0) {
             gameManager.createNewBird(-1, X_LENGTH);
         }
     }
 
-    private void startGame() {
+    private void startTimer() {
         startTime = System.currentTimeMillis();
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -182,11 +195,12 @@ public class GameActivity extends AppCompatActivity {
                         gameManager.clearAllObjects();
 
                         loadImage(gameManager.getPlane().getExplodeImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
-                        gameManager.getPlane().setY(10);
-                        gameManager.getPlane().setX(1);
 
-//                        stopGame();
-//                        startGame();
+                        gameManager.getPlane().setY(BOARD_LIMIT);
+                        gameManager.getPlane().setX(DEFAULT_X_FOR_PLANE);
+
+//                        stopTimer();
+//                        startTimer();
                     }
                 });
             }

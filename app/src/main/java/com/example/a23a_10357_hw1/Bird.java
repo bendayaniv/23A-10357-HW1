@@ -7,8 +7,8 @@ public class Bird extends Object{
     private final int birdImage = R.drawable.bird;
 
     public Bird(int x, int y) {
-        this.x = x;
-        this.y = y;
+        setX(x);
+        setY(y);
     }
 
     @Override

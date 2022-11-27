@@ -9,8 +9,8 @@ public class ManagerActivity {
     private Object[][] objectsBoard;
     private int numOfObjects;
 
-    public ManagerActivity(int life, int yLength, int xLength) {
-        plane = new Plane(life);
+    public ManagerActivity(int life, int yLength, int xLength, int defaultXForPlane, int defaultYForPlane) {
+        plane = new Plane(life, defaultXForPlane, defaultYForPlane);
         objectsBoard = new Object[yLength][xLength];
         numOfObjects = 0;
     }
@@ -61,7 +61,7 @@ public class ManagerActivity {
                 }
             }
         }
-        checkTheAbilityToCreateNewBird(boardLimit, xScale);
+        checkTheAbilityToCreateNewBird(xScale);
     }
 
     public void clearAllObjects() {
@@ -77,53 +77,59 @@ public class ManagerActivity {
      * Check if we can create new bird this step
      * (so that the player can continue to play without being disqualified)
      *
-     * @param boardLimit an indication to see if there could be a problem in placing a bird
-     * @param xScale     the limit on the x scale
+     * @param xScale the limit on the x scale
      */
-    public void checkTheAbilityToCreateNewBird(int boardLimit, int xScale) {
-        int theIndex = -1;
+    public void checkTheAbilityToCreateNewBird(int xScale) {
+        int theLimitedIndex = -1;
         if (numOfObjects > 0) {
-            if (boardLimit <= xScale) {
-                ArrayList<Integer> checkList = new ArrayList<>();
-                boolean checking = true;
 
-                for (int i = xScale - 1; i > 0; i--) {
-                    for (int j = 0; j < objectsBoard[i].length; j++) {
-                        if (objectsBoard[i][j] instanceof Bird) {
-                            checkList.add(objectsBoard[i][j].getX());
-                            break;
-                        }
-                    }
-                }
+            //Array list of all the x-scales of the potential problematic birds for creating a new one
+            ArrayList<Integer> checkList = new ArrayList<>();
 
-                if (checkList.size() == xScale - 1) {
-                    if (checkList.get(0) == 0) {
-                        for (int i = 1; i < checkList.size(); i++) {
-                            if (checkList.get(i - 1) + 1 != checkList.get(i)) {
-                                checking = false;
-                                break;
-                            }
-                        }
-                        if (checking == true) {
-                            theIndex = xScale - 1;
-                        }
-                        createNewBird(theIndex, xScale);
-                    } else if (checkList.get(0) == xScale - 2) {
-                        for (int i = 1; i < checkList.size(); i++) {
-                            if (checkList.get(i - 1) - 1 != checkList.get(i)) {
-                                checking = false;
-                                break;
-                            }
-                        }
-                        if (checking == true) {
-                            theIndex = 0;
-                        }
-                        createNewBird(theIndex, xScale);
+            //Our indication if there can be a problem to create a new bird in certain spot
+            boolean checking = true;
+
+            //Getting all the x-scales of the birds that currently on the board
+            for (int i = xScale - 1; i > 0; i--) {
+                for (int j = 0; j < objectsBoard[i].length; j++) {
+                    if (objectsBoard[i][j] instanceof Bird) {
+                        checkList.add(objectsBoard[i][j].getX());
+                        break;
                     }
                 }
             }
+
+            //Checking if there is possibility to problem to create new bird
+            if (checkList.size() == xScale - 1) {
+                //Checking one option [secondary diagonal]
+                if (checkList.get(0) == 0) {
+                    for (int i = 1; i < checkList.size(); i++) {
+                        if (checkList.get(i - 1) + 1 != checkList.get(i)) {
+                            checking = false;
+                            break;
+                        }
+                    }
+                    if (checking == true) {
+                        theLimitedIndex = xScale - 1;
+                    }
+                    createNewBird(theLimitedIndex, xScale);
+                }
+                // Checking second option[main diagonal]
+                else if (checkList.get(0) == xScale - 2) {
+                    for (int i = 1; i < checkList.size(); i++) {
+                        if (checkList.get(i - 1) - 1 != checkList.get(i)) {
+                            checking = false;
+                            break;
+                        }
+                    }
+                    if (checking == true) {
+                        theLimitedIndex = 0;
+                    }
+                    createNewBird(theLimitedIndex, xScale);
+                }
+            }
         } else {
-            createNewBird(theIndex, xScale);
+            createNewBird(theLimitedIndex, xScale);
         }
     }
 

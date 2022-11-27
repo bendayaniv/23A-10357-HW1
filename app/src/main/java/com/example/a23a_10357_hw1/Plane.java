@@ -9,10 +9,10 @@ public class Plane extends Object {
     private final int planeImage = R.drawable.plane;
     private final int explodeImage = R.drawable.explosion;
 
-    public Plane(int lifeLength) {
+    public Plane(int lifeLength, int defaultX, int defaultY) {
         life = lifeLength;
-        setX(1);
-        setY(10);
+        setX(defaultX);
+        setY(defaultY);
     }
 
     public int getExplodeImage() {
