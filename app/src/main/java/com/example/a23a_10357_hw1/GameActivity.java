@@ -129,6 +129,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void loadAllObjects() {
+//        Object[][] board = gameManager.getBoard();
         Object[][] board = gameManager.getBoard();
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {

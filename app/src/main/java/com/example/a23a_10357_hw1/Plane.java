@@ -1,6 +1,6 @@
 package com.example.a23a_10357_hw1;
 
-public class Plane extends Object {
+public class Plane implements Object /*extends Object*/ {
 
     private int numOfCrash = 0;
     private int x;
@@ -33,27 +33,52 @@ public class Plane extends Object {
     }
 
     @Override
-    int getObjectImage() {
+    public int getObjectImage() {
         return planeImage;
     }
 
     @Override
-    int getX() {
+    public int getX() {
         return x;
     }
 
     @Override
-    void setX(int x) {
+    public void setX(int x) {
         this.x = x;
     }
 
     @Override
-    int getY() {
+    public int getY() {
         return y;
     }
 
     @Override
-    void setY(int y) {
+    public void setY(int y) {
         this.y = y;
     }
+
+//    @Override
+//    int getObjectImage() {
+//        return planeImage;
+//    }
+//
+//    @Override
+//    int getX() {
+//        return x;
+//    }
+//
+//    @Override
+//    void setX(int x) {
+//        this.x = x;
+//    }
+//
+//    @Override
+//    int getY() {
+//        return y;
+//    }
+//
+//    @Override
+//    void setY(int y) {
+//        this.y = y;
+//    }
 }
