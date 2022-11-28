@@ -49,7 +49,6 @@ public class GameActivity extends AppCompatActivity {
         findViews();
         createMovingPlaneButtons();
         gameManager = new ManagerActivity(game_IMG_hearts.length, Y_LENGTH, X_LENGTH, DEFAULT_X_FOR_PLANE, BOARD_LIMIT);
-        startTimer();
     }
 
     private void findViews() {
@@ -129,7 +128,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void loadAllObjects() {
-//        Object[][] board = gameManager.getBoard();
         Object[][] board = gameManager.getBoard();
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -206,5 +204,17 @@ public class GameActivity extends AppCompatActivity {
                 });
             }
         }, DELAY, DELAY);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startTimer();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopTimer();
     }
 }
