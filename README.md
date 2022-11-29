@@ -10,7 +10,7 @@ You can't move forward, only to right or left.
 
 
 ## Later in the project 
-we will add prise object that will give score to the player, and save records in a 'List of Records'.
+We will add prize object that will give score to the player, and save records in a 'List of Records'.
 
 
 
