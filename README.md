@@ -9,7 +9,8 @@ You can't move forward, only to right or left.
 
 Later in the project, we will add prise object that will give score to the player, and save records in a 'List of Records'.
 
-![[Birds_and_Plane.mp4|100]]
+
+[label][def]
 
 
-
+[def]: ../../../../../C:/Users/YanivLT/AndroidStudioProjects/23A10357HW1/Birds_and_Plane.mp4
