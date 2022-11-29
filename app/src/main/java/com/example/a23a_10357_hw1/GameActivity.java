@@ -19,11 +19,11 @@ import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
 
-    final int DELAY = 1000;
+    private final int DELAY = 1000;
     private final int Y_LENGTH = 12;
     private final int X_LENGTH = 3;
     private final int BOARD_LIMIT = 10;
-    private final int DEFAULT_X_FOR_PLANE = 1;
+    private final int DEFAULT_X_FOR_PLANE = X_LENGTH / 2;
     private final int STEP_RIGHT_OF_PLANE = 1;
     private final int STEP_LEFT_OF_PLANE = -1;
     private final String LEFT_DIRECTION = "LEFT";
@@ -96,9 +96,9 @@ public class GameActivity extends AppCompatActivity {
      */
     private void movePlane(String direction) {
         deleteImage(gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
-        if (direction.equals("RIGHT"))
+        if (direction.equals(RIGHT_DIRECTION))
             gameManager.movePlane(STEP_RIGHT_OF_PLANE);
-        else if (direction.equals("LEFT"))
+        else if (direction.equals(LEFT_DIRECTION))
             gameManager.movePlane(STEP_LEFT_OF_PLANE);
         loadImage(gameManager.getPlane().getObjectImage(), gameBoard[gameManager.getPlane().getY()][gameManager.getPlane().getX()]);
     }

@@ -176,5 +176,4 @@ public class ManagerActivity {
             getPlane().setNumOfCrash(crash);
         }
     }
-
 }
