@@ -16,4 +16,6 @@ You can't move forward, only to right or left.
 we will add prise object that will give score to the player, and save records in a 'List of Records'.
 '''
 
-[label](../../../../../C:/Users/YanivLT/AndroidStudioProjects/23A10357HW1/Birds_and_Plane.mp4)
+
+https://user-images.githubusercontent.com/52703125/204456225-91109ef9-6716-4625-bfcb-b0f612090434.mp4
+
