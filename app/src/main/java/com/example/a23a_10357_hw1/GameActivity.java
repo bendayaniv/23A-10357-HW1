@@ -197,9 +197,6 @@ public class GameActivity extends AppCompatActivity {
 
                         gameManager.getPlane().setY(BOARD_LIMIT);
                         gameManager.getPlane().setX(DEFAULT_X_FOR_PLANE);
-
-//                        stopTimer();
-//                        startTimer();
                     }
                 });
             }

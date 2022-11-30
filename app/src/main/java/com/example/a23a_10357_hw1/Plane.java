@@ -1,6 +1,6 @@
 package com.example.a23a_10357_hw1;
 
-public class Plane /*implements Object*/ extends Object {
+public class Plane extends Object {
 
     private int numOfCrash = 0;
     private final int life;
